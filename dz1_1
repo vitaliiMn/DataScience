@@ -1,0 +1,332 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# ДЗ по линейной алгебре\n",
+    "**Студент:** [Маношин Виталий Дмитриевич]  \n",
+    "**Дата:** 22.09.2026"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Задача 1\n",
+    "Задана матрица:\n",
+    "$$\n",
+    "A = \\begin{bmatrix} 1 & 2 & 3 & -1 \\\\\n",
+    "                    2 & 5 & 0 & 1 \\\\ \n",
+    "                    1 & 2 & 1 & 0 \\\\\n",
+    "                    2 & 3 & 1 & -1\n",
+    "    \\end{bmatrix}\n",
+    "$$\n",
+    "Вычислить вручную ранг матрицы и проверить результат в `numpy`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Решение (метод Гаусса)\n",
+    "\n",
+    "**Шаг 1.** Вычитаем из строк 2, 3, 4 первую строку с соответствующими коэффициентами ($R_2 - 2R_1$, $R_3 - R_1$, $R_4 - 2R_1$):\n",
+    "\n",
+    "$$\n",
+    "\\begin{bmatrix} \n",
+    "1 & 2 & 3 & -1 \\\\\n",
+    "0 & 1 & -6 & 3 \\\\\n",
+    "0 & 0 & -2 & 1 \\\\\n",
+    "0 & -1 & -5 & 1\n",
+    "\\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "**Шаг 2.** Прибавляем к 4-й строке 2-ю ($R_4 + R_2$):\n",
+    "\n",
+    "$$\n",
+    "\\begin{bmatrix} \n",
+    "1 & 2 & 3 & -1 \\\\\n",
+    "0 & 1 & -6 & 3 \\\\\n",
+    "0 & 0 & -2 & 1 \\\\\n",
+    "0 & 0 & -11 & 4\n",
+    "\\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "**Шаг 3.** Вычитаем из 4-й строки 3-ю, умноженную на $\\frac{11}{2}$ ($R_4 - \\frac{11}{2}R_3$):\n",
+    "\n",
+    "$$\n",
+    "\\begin{bmatrix} \n",
+    "1 & 2 & 3 & -1 \\\\\n",
+    "0 & 1 & -6 & 3 \\\\\n",
+    "0 & 0 & -2 & 1 \\\\\n",
+    "0 & 0 & 0 & -\\frac{3}{2}\n",
+    "\\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "Матрица приведена к ступенчатому виду. Все **4 строки ненулевые**, следовательно:\n",
+    "\n",
+    "$$\n",
+    "\\boxed{\\text{rank}(A) = 4}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "A = np.array([[1, 2, 3, -1],\n",
+    "              [2, 5, 0, 1],\n",
+    "              [1, 2, 1, 0],\n",
+    "              [2, 3, 1, -1]])\n",
+    "\n",
+    "print(\"Матрица A:\")\n",
+    "print(A)\n",
+    "print(\"\\nРанг матрицы (numpy):\", np.linalg.matrix_rank(A))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Задача 2\n",
+    "Найти $\\text{rank}(xx^{\\top})$, где $x \\in \\mathbb{R}^n$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Решение\n",
+    "\n",
+    "Пусть $x = (x_1, x_2, \\ldots, x_n)^{\\top} \\in \\mathbb{R}^n$. Тогда внешнее произведение $xx^{\\top}$ — это матрица размера $n \\times n$:\n",
+    "\n",
+    "$$\n",
+    "xx^{\\top} = \\begin{bmatrix} x_1 \\\\ x_2 \\\\ \\vdots \\\\ x_n \\end{bmatrix} \\begin{bmatrix} x_1 & x_2 & \\cdots & x_n \\end{bmatrix} = \\begin{bmatrix} x_1^2 & x_1 x_2 & \\cdots & x_1 x_n \\\\ x_2 x_1 & x_2^2 & \\cdots & x_2 x_n \\\\ \\vdots & \\vdots & \\ddots & \\vdots \\\\ x_n x_1 & x_n x_2 & \\cdots & x_n^2 \\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "Заметим, что **каждый $j$-й столбец** этой матрицы имеет вид:\n",
+    "$$\n",
+    "\\text{col}_j = x_j \\cdot x\n",
+    "$$\n",
+    "\n",
+    "То есть все столбцы матрицы **пропорциональны** вектору $x$. Это означает, что пространство столбцов натянуто на один вектор $x$, и его размерность равна 1 (при $x \\neq 0$).\n",
+    "\n",
+    "**Ответ:**\n",
+    "$$\n",
+    "\\boxed{\\text{rank}(xx^{\\top}) = \\begin{cases} 1, & \\text{если } x \\neq 0 \\\\ 0, & \\text{если } x = 0 \\end{cases}}\n",
+    "$$\n",
+    "$\\blacksquare$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Задача 3\n",
+    "Проверить аксиомы метрики для углового расстояния $d_{ang}(a,b)$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Решение\n",
+    "\n",
+    "Угловое расстояние определяется как:\n",
+    "$$\n",
+    "d_{ang}(a,b) = \\arccos\\left(\\frac{\\langle a, b \\rangle}{\\|a\\| \\cdot \\|b\\|}\\right) = \\theta \\in [0, \\pi]\n",
+    "$$\n",
+    "где $\\theta$ — угол между векторами $a$ и $b$.\n",
+    "\n",
+    "Проверим 4 аксиомы метрики (для ненулевых векторов):\n",
+    "\n",
+    "**1. Неотрицательность:** $d_{ang}(a,b) \\ge 0$\n",
+    "\n",
+    "Функция $\\arccos$ возвращает значения из отрезка $[0, \\pi]$, поэтому $d_{ang}(a,b) \\ge 0$. $\\checkmark$\n",
+    "\n",
+    "**2. Тождество неразличимых:** $d_{ang}(a,b) = 0 \\iff a$ и $b$ сонаправлены\n",
+    "\n",
+    "$d_{ang}(a,b) = 0 \\iff \\arccos(\\cos\\theta) = 0 \\iff \\theta = 0$. Угол равен нулю тогда и только тогда, когда векторы сонаправлены (т.е. $a = \\lambda b$ при $\\lambda > 0$). $\\checkmark$\n",
+    "\n",
+    "**3. Симметричность:** $d_{ang}(a,b) = d_{ang}(b,a)$\n",
+    "\n",
+    "Скалярное произведение симметрично: $\\langle a, b \\rangle = \\langle b, a \\rangle$, следовательно:\n",
+    "$$\n",
+    "d_{ang}(a,b) = \\arccos\\left(\\frac{\\langle a, b \\rangle}{\\|a\\|\\|b\\|}\\right) = \\arccos\\left(\\frac{\\langle b, a \\rangle}{\\|b\\|\\|a\\|}\\right) = d_{ang}(b,a). \\quad \\checkmark\n",
+    "$$\n",
+    "\n",
+    "**4. Неравенство треугольника:** $d_{ang}(a,c) \\le d_{ang}(a,b) + d_{ang}(b,c)$\n",
+    "\n",
+    "Геометрически $d_{ang}$ — это угол между векторами. Если спроецировать единичные векторы на единичную сферу $S^{n-1}$, то $d_{ang}$ становится **сферическим расстоянием** (геодезическим). На сфере геодезические (дуги больших кругов) удовлетворяют неравенству треугольника. $\\checkmark$\n",
+    "\n",
+    "**Вывод:** все 4 аксиомы метрики выполнены. $\\blacksquare$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Задача 4\n",
+    "Доказать ортогональность матрицы поворота в $\\mathbb{R}^3$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Решение\n",
+    "\n",
+    "Матрица поворота (матрица Гивенса) вокруг оси $OZ$ на угол $\\alpha$:\n",
+    "\n",
+    "$$\n",
+    "R_z(\\alpha) = \\begin{bmatrix} \\cos\\alpha & -\\sin\\alpha & 0 \\\\ \\sin\\alpha & \\cos\\alpha & 0 \\\\ 0 & 0 & 1 \\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "Матрица называется ортогональной, если $R^{\\top}R = I$.\n",
+    "\n",
+    "Транспонированная матрица:\n",
+    "$$\n",
+    "R_z^{\\top} = \\begin{bmatrix} \\cos\\alpha & \\sin\\alpha & 0 \\\\ -\\sin\\alpha & \\cos\\alpha & 0 \\\\ 0 & 0 & 1 \\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "Вычислим произведение $R_z^{\\top} R_z$:\n",
+    "\n",
+    "$$\n",
+    "R_z^{\\top} R_z = \\begin{bmatrix} \\cos\\alpha & \\sin\\alpha & 0 \\\\ -\\sin\\alpha & \\cos\\alpha & 0 \\\\ 0 & 0 & 1 \\end{bmatrix} \\begin{bmatrix} \\cos\\alpha & -\\sin\\alpha & 0 \\\\ \\sin\\alpha & \\cos\\alpha & 0 \\\\ 0 & 0 & 1 \\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "Попарно вычисляем элементы:\n",
+    "- $(1,1): \\cos^2\\alpha + \\sin^2\\alpha = 1$\n",
+    "- $(1,2): -\\cos\\alpha\\sin\\alpha + \\sin\\alpha\\cos\\alpha = 0$\n",
+    "- $(2,1): -\\sin\\alpha\\cos\\alpha + \\cos\\alpha\\sin\\alpha = 0$\n",
+    "- $(2,2): \\sin^2\\alpha + \\cos^2\\alpha = 1$\n",
+    "- $(3,3): 1$\n",
+    "\n",
+    "Получаем:\n",
+    "$$\n",
+    "R_z^{\\top} R_z = \\begin{bmatrix} 1 & 0 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1 \\end{bmatrix} = I \\quad \\blacksquare\n",
+    "$$\n",
+    "\n",
+    "> Аналогично доказывается ортогональность матриц поворота $R_x(\\alpha)$ и $R_y(\\alpha)$ вокруг осей $OX$ и $OY$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Задача 5\n",
+    "Проверить выражение $\\|A\\|_F = \\sqrt{(A,A)_F}$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Решение\n",
+    "\n",
+    "**Определения:**\n",
+    "\n",
+    "Фробениусова норма матрицы $A \\in \\mathbb{R}^{n \\times m}$:\n",
+    "$$\n",
+    "\\|A\\|_F = \\sqrt{\\sum_{i=1}^{n}\\sum_{j=1}^{m} |a_{ij}|^2}\n",
+    "$$\n",
+    "\n",
+    "Скалярное (фробениусово) произведение двух матриц:\n",
+    "$$\n",
+    "(A,B)_F = \\text{tr}(A^{\\top}B) = \\sum_{i=1}^{n}\\sum_{j=1}^{m} a_{ij} b_{ij}\n",
+    "$$\n",
+    "\n",
+    "**Доказательство:**\n",
+    "\n",
+    "Подставим $B = A$ в формулу скалярного произведения:\n",
+    "\n",
+    "$$\n",
+    "(A,A)_F = \\sum_{i=1}^{n}\\sum_{j=1}^{m} a_{ij} \\cdot a_{ij} = \\sum_{i=1}^{n}\\sum_{j=1}^{m} a_{ij}^2\n",
+    "$$\n",
+    "\n",
+    "Для вещественной матрицы $a_{ij}^2 = |a_{ij}|^2$, поэтому:\n",
+    "\n",
+    "$$\n",
+    "(A,A)_F = \\sum_{i=1}^{n}\\sum_{j=1}^{m} |a_{ij}|^2\n",
+    "$$\n",
+    "\n",
+    "Извлекаем квадратный корень из обеих частей:\n",
+    "\n",
+    "$$\n",
+    "\\sqrt{(A,A)_F} = \\sqrt{\\sum_{i=1}^{n}\\sum_{j=1}^{m} |a_{ij}|^2} = \\|A\\|_F \\quad \\blacksquare\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Проверка равенства ||A||_F = sqrt((A,A)_F) в numpy\n",
+    "\n",
+    "A = np.array([[1, 2, 3],\n",
+    "              [4, 5, 6]])\n",
+    "\n",
+    "# Норма Фробениуса через встроенную функцию\n",
+    "norm_f = np.linalg.norm(A, 'fro')\n",
+    "\n",
+    "# Через скалярное произведение (A, A)_F = tr(A^T A)\n",
+    "inner_product = np.trace(A.T @ A)\n",
+    "sqrt_inner = np.sqrt(inner_product)\n",
+    "\n",
+    "print(f\"||A||_F           = {norm_f:.6f}\")\n",
+    "print(f\"sqrt((A,A)_F)     = {sqrt_inner:.6f}\")\n",
+    "print(f\"Равенство верно:  {np.isclose(norm_f, sqrt_inner)}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Итоговая таблица\n",
+    "\n",
+    "| № | Задача | Результат |\n",
+    "|---|--------|----------|\n",
+    "| 1 | Ранг матрицы $4\\times 4$ | $\\text{rank}(A) = 4$ |\n",
+    "| 2 | $\\text{rank}(xx^{\\top})$ | $1$ (при $x \\neq 0$) |\n",
+    "| 3 | Аксиомы $d_{ang}$ | Все 4 аксиомы выполнены |\n",
+    "| 4 | Ортогональность $R$ | $R^{\\top}R = I$ — доказано |\n",
+    "| 5 | $\\|A\\|_F = \\sqrt{(A,A)_F}$ | Доказано и проверено в коде |"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
